@@ -3441,9 +3441,9 @@ var cryptico = (function() {
     }
 
     // Generates an RSA key from a passphrase.
-    my.generateRSAKey = function(passphrase, bitlength)
+    my.generateRSAKey = function(passphrase, bitlength, useEntropy)
     {
-        Math.seedrandom(sha256.hex(passphrase));
+        Math.seedrandom(sha256.hex(passphrase), useEntropy);
         var rsa = new RSAKey();
         rsa.generate(bitlength, "03");
         return rsa;
