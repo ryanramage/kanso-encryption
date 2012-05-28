@@ -1,0 +1,18 @@
+{
+    "name": "kanso-encryption",
+    "version": "0.0.1",
+    "categories": ["utils"],
+    "maintainers": [
+        {
+            "name": "Ryan Ramage",
+            "url": "http://github.com/ryanramage"
+        }
+    ],
+    "modules": ["cryptico.js", "sjcl.js"],
+    "modules_attachment": false,
+    "dependencies": {
+        "modules": ">=0.0.8"
+    },
+    "description": "Tools for encryption and decryption"
+
+}
