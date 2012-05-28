@@ -2699,6 +2699,20 @@ RSAKey.prototype.doPublic = RSADoPublic;
 RSAKey.prototype.setPublic = RSASetPublic;
 RSAKey.prototype.encrypt = RSAEncrypt;
 
+
+RSAKey.prototype.setFromString = function(str) {
+    var obj = JSON.parse(str);    this.n = null;
+        this.e = 0;
+        this.d = null;
+        this.p = null;
+        this.q = null;
+        this.dmp1 = null;
+        this.dmq1 = null;
+        this.coeff = null;
+    this.setPublic()
+}
+
+
 // Version 1.1: support utf-8 decoding in pkcs1unpad2
 // Undo PKCS#1 (type 2, random) padding and, if valid, return the plaintext
 
@@ -2759,7 +2773,7 @@ function RSASetPrivateEx(N, E, D, P, Q, DP, DQ, C)
         this.dmq1 = parseBigInt(DQ, 16);
         this.coeff = parseBigInt(C, 16);
     }
-    else alert("Invalid RSA private key");
+    else throw "Invalid RSA private key";
 }
 
 // Generate a new random private key B bits long, using public expt E
@@ -3540,3 +3554,25 @@ exports.publicKeyString = cryptico.publicKeyString;
 exports.publicKeyID = cryptico.publicKeyID;
 exports.encrypt = cryptico.encrypt;
 exports.decrypt = cryptico.decrypt;
+exports.rsa_key_from_string = function(str) {
+    var r2 = JSON.parse(str) ;
+
+    var rsa2 = new  RSAKey();
+    rsa2.setPrivateEx(r2.n, r2.e, r2.d, r2.p, r2.q, r2.dmp1, r2.dmq1, r2.coeff);
+
+    return rsa2;
+}
+
+exports.rsa_key_to_string = function(RSAkey) {
+    var result = {
+        n : RSAkey.n.toString(16),
+        e : RSAkey.e.toString(16),
+        d : RSAkey.d.toString(16),
+        p :  RSAkey.p.toString(16),
+        q :  RSAkey.q.toString(16),
+        dmp1 :  RSAkey.dmp1.toString(16),
+        dmq1 :  RSAkey.dmq1.toString(16),
+        coeff :  RSAkey.coeff.toString(16)
+    }
+    return JSON.stringify(result);
+}
