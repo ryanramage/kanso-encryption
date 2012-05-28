@@ -2700,18 +2700,6 @@ RSAKey.prototype.setPublic = RSASetPublic;
 RSAKey.prototype.encrypt = RSAEncrypt;
 
 
-RSAKey.prototype.setFromString = function(str) {
-    var obj = JSON.parse(str);    this.n = null;
-        this.e = 0;
-        this.d = null;
-        this.p = null;
-        this.q = null;
-        this.dmp1 = null;
-        this.dmq1 = null;
-        this.coeff = null;
-    this.setPublic()
-}
-
 
 // Version 1.1: support utf-8 decoding in pkcs1unpad2
 // Undo PKCS#1 (type 2, random) padding and, if valid, return the plaintext

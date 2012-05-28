@@ -1,36 +1,70 @@
 var cryptico = require('./cryptico');
 var sjcl = require('./sjcl');
 
+var fs = require('fs');
+var path = require('path');
+
+var dir_name = '.kanso';
+var file_name = 'keystore';
+
 var password = process.argv[2];
-var PlainText = process.argv[3];
 
-var Bits = 1024;
+var storage_dir = findStorageDir(process.env);
 
-var RSAkey = cryptico.generateRSAKey(password, Bits, false);
-var PublicKeyString = cryptico.publicKeyString(RSAkey);
+if (isKeyStored(storage_dir)) {
+    console.log('key already exists in ' + storage_dir);
+} else {
+    var keystoreFile = generateKeystore(password);
+    store(keystoreFile, storage_dir);
 
-//console.log(RSAkey);
+}
+
+function generateKeystore(passphrase) {
+    var Bits = 1024;
+    var RSAkey = cryptico.generateRSAKey(passphrase, Bits, true);
+    var PublicKeyString = cryptico.publicKeyString(RSAkey);
+
+    console.log('Public Key:');
+    console.log(PublicKeyString);
+    var keystore = sjcl.encrypt(passphrase, cryptico.rsa_key_to_string(RSAkey), {adata: PublicKeyString} );
+    return keystore;
+}
+
+function findStorageDir(env) {
+    var home = env.HOME;
+    if (!home) home = __dirname;
+    return path.join(home, dir_name);
+}
+
+function isKeyStored(dir) {
+    var stored = false;
+    if (path.existsSync(dir)) {
+        if (path.existsSync(path.join(dir, file_name))) {
+            stored = true;
+        }
+    }
+    return stored;
+}
 
 
-var EncryptionResult = cryptico.encrypt(PlainText, PublicKeyString);
-//console.log(EncryptionResult);
 
-var keystore = sjcl.encrypt(password, cryptico.rsa_key_to_string(RSAkey), {adata: PublicKeyString} );
+function store(keystore, dir) {
+    fs.mkdir(dir, 0700, function(err){
 
+        var location = path.join(dir, file_name)
 
-var decrypted = sjcl.decrypt(password, keystore);
-
-
-rsa2 = cryptico.rsa_key_from_string(decrypted);
-
-//console.log(rsa2);
-
-var PublicKeyString2 = cryptico.publicKeyString(rsa2);
+        fs.writeFile(location, keystore, function (err) {
+          if (err) throw err;
+          console.log('Private key saved at ' + location);
+        });
+    });
+}
 
 
 
-var DecryptionResult = cryptico.decrypt(EncryptionResult.cipher, rsa2);
-console.log(DecryptionResult);
+
+
+
 
 
 

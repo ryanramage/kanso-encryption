@@ -8,7 +8,7 @@
             "url": "http://github.com/ryanramage"
         }
     ],
-    "modules": ["cryptico.js", "sjcl.js"],
+    "modules": ["cryptico.js", "sjcl.js", "keystore.js"],
     "modules_attachment": false,
     "dependencies": {
         "modules": ">=0.0.8"
